@@ -50,6 +50,7 @@ namespace BinaryTrees
         Add(root, values[i]);
     }
 
+    public BinaryTree(Node r) => root = r;
     public void Print()
     {
       root.Print("", true);
@@ -128,7 +129,23 @@ namespace BinaryTrees
 
     public bool IsBinarySearchTree()
     {
-      return false;
+      return IsBinarySearchTree(root);
+    }
+    public bool IsBinarySearchTree(Node n)
+    {
+      if (n != null)
+      {
+        if ( ((n.Right != null) && (n.Right.Data < n.Data)) || ((n.Left != null) && (n.Left.Data > n.Data)) )
+          return false;
+        else
+        {
+          IsBinarySearchTree(n.Left);
+          IsBinarySearchTree(n.Right);
+        }
+
+      }
+
+      return true;
     }
   }
   class Program
@@ -145,6 +162,18 @@ namespace BinaryTrees
         Console.WriteLine("not found!");
       bool contains = tree.Contains(151);
       Console.WriteLine(contains);
+      bool valid = tree.IsBinarySearchTree();
+      Console.WriteLine(valid);
+      //invalid tree
+      Node root = new Node(5);
+      root.Left = new Node(2);
+      root.Right = new Node(7);
+      root.Right.Left = new Node(9);
+      root.Right.Right = new Node(1);
+      BinaryTree otherTree = new BinaryTree(root);
+      otherTree.Print();
+      bool otherValid = otherTree.IsBinarySearchTree();
+      Console.WriteLine(otherValid);
       Console.ReadLine();
     }
   }
