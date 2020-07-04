@@ -76,7 +76,18 @@ namespace BinaryTrees
 
     public int[] ToOrderedArray()
     {
-      return null;
+      List<int> v = new List<int>();
+      ToOrderedArray(root, v);
+      return v.ToArray();
+    }
+
+    public void ToOrderedArray(Node node, List<int> v)
+    {
+      if (node.Left != null)
+        ToOrderedArray(node.Left, v);
+      v.Add(node.Data);
+      if (node.Right != null)
+        ToOrderedArray(node.Right, v);
     }
 
     public bool Contains(int v)
@@ -149,6 +160,26 @@ namespace BinaryTrees
         }
       }
     }
+    public int Count()
+    {
+      int t = 1; //starting element
+      CountRecursive(root, ref t);
+      return t;
+    }
+
+    public void CountRecursive(Node root, ref int t)
+    {
+      if (root.Left != null)
+      {
+        t++;
+        CountRecursive(root.Left, ref t);
+      }
+      if (root.Right != null)
+      {
+        t++;
+        CountRecursive(root.Right, ref t);
+      }
+    }
   }
   class Program
   {
@@ -166,6 +197,8 @@ namespace BinaryTrees
       Console.WriteLine(contains);
       bool valid = tree.IsBinarySearchTree();
       Console.WriteLine("Is Valid " + valid);
+      Console.WriteLine("Total nodes " + tree.Count());
+      Console.WriteLine("Ordered array " + tree.ToOrderedArray());
       //invalid tree
       Node root = new Node(5);
       root.Left = new Node(2);
@@ -176,6 +209,8 @@ namespace BinaryTrees
       otherTree.Print();
       bool otherValid = otherTree.IsBinarySearchTree();
       Console.WriteLine("Is Valid " + otherValid);
+      Console.WriteLine("Total nodes " + otherTree.Count());
+      Console.WriteLine("Ordered array " + otherTree.ToOrderedArray());
       Console.ReadLine();
     }
   }
