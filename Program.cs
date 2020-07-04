@@ -180,6 +180,28 @@ namespace BinaryTrees
         CountRecursive(root.Right, ref t);
       }
     }
+
+    public bool IsBalanced()
+    {
+      int leftHeight = 0;
+      int rightHeight = 0;
+      if (root.Left != null)
+        IsBalanced(root.Left, ref leftHeight);
+      if (root.Right != null)
+        IsBalanced(root.Right, ref rightHeight);
+      return ( Math.Abs(rightHeight - leftHeight) <= 1 );
+    }
+    public void IsBalanced(Node n, ref int h)
+    {
+      if ( ( n.Left != null ) || ( n.Right != null ) )
+      {
+        h++;
+        if (n.Left != null)
+          IsBalanced(n.Left, ref h);
+        if (n.Right != null)
+          IsBalanced(n.Right, ref h);
+      }
+    }
   }
   class Program
   {
@@ -199,6 +221,7 @@ namespace BinaryTrees
       Console.WriteLine("Is Valid " + valid);
       Console.WriteLine("Total nodes " + tree.Count());
       Console.WriteLine("Ordered array " + tree.ToOrderedArray());
+      Console.WriteLine("Is Balanced " + tree.IsBalanced());
       //invalid tree
       Node root = new Node(5);
       root.Left = new Node(2);
@@ -211,6 +234,7 @@ namespace BinaryTrees
       Console.WriteLine("Is Valid " + otherValid);
       Console.WriteLine("Total nodes " + otherTree.Count());
       Console.WriteLine("Ordered array " + otherTree.ToOrderedArray());
+      Console.WriteLine("Is Balanced " + otherTree.IsBalanced());
       Console.ReadLine();
     }
   }
