@@ -6,7 +6,7 @@ namespace BinaryTrees
   enum TraversalOrder { PreOrder, InOrder, PostOrder }
   class Node
   {
-    public int Data { get;  }
+    public int Data;
     public Node Left;
     public Node Right;
     public Node(int v) => Data = v;
@@ -164,6 +164,16 @@ namespace BinaryTrees
       }
 
       return false;
+    }
+
+    public void Swap(int v, int target)
+    {
+      Node t = null;
+      FindRef(this.root, target, ref t);
+      if (t != null )
+      {
+        t.Data = v;
+      }
     }
 
     public Node Find(int v)
@@ -340,6 +350,8 @@ namespace BinaryTrees
       BinaryTree tree = new BinaryTree(treeValues);
       tree.Print(TraversalOrder.InOrder);
       tree.Insert(1);
+      tree.Print(TraversalOrder.InOrder);
+      tree.Swap(19, 9);
       tree.Print(TraversalOrder.InOrder);
       Node rightout = tree.FindDeepestRighteous();
       Console.WriteLine("Right out" + rightout.Data);
