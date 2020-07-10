@@ -185,6 +185,23 @@ namespace BinaryTrees
       return null;
     }
 
+    public Node FindRef(Node n, int v, ref Node nodeRef)
+    {
+      if (n != null)
+      {
+        if (n.Data == v)
+        {
+          nodeRef = n;
+        }
+        if (v < n.Data)
+          FindRef(n.Left, v, ref nodeRef);
+        else
+          FindRef(n.Right, v, ref nodeRef);
+      }
+
+      return null;
+    }
+
     public void Insert(int v)
     {
       var inserted = Insert(this.root, v);
@@ -213,9 +230,41 @@ namespace BinaryTrees
       return root;
     }
 
-    public void Delete(int v )
+    public void Delete( int v )
     {
+      Node rightout = FindDeepestRighteous();
+      Node todeleteRef = null;
+      Node rightoutRef = null;
+      FindRef(this.root, rightout.Data, ref rightoutRef);
+      FindRef(this.root, v, ref todeleteRef);
+      if ( (rightoutRef != null ) && (todeleteRef != null ) )
+      {
+        todeleteRef = rightout;
+        rightoutRef = null;
+      }
+    }
 
+    public Node FindDeepestRighteous()
+    {
+      Node n = new Node(0);
+      int currentNodeLevel = 0;
+      FindDeepestRighteous(this.root, 0, ref n, ref currentNodeLevel);
+      return n;
+    }
+
+    private void FindDeepestRighteous( Node root, int currentLevel, ref Node currentNode, ref int currenNodeLevel )
+    {
+      if (root.Left != null)
+        FindDeepestRighteous(root.Left, currentLevel + 1, ref currentNode, ref currenNodeLevel);
+      if (root.Right != null)
+      {
+        if ( currentLevel > currenNodeLevel)
+        {
+          currentNode = root.Right;
+          currenNodeLevel = currentLevel;
+        }
+        FindDeepestRighteous(root.Right, currentLevel + 1, ref currentNode, ref currenNodeLevel);
+      }
     }
 
     public bool IsBinarySearchTree()
@@ -292,7 +341,8 @@ namespace BinaryTrees
       tree.Print(TraversalOrder.InOrder);
       tree.Insert(1);
       tree.Print(TraversalOrder.InOrder);
-
+      Node rightout = tree.FindDeepestRighteous();
+      Console.WriteLine("Right out" + rightout.Data);
       Node node = tree.Find(151);
       if ( node != null )
         Console.WriteLine("found! data: " + node.Data );
