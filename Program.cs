@@ -1,11 +1,9 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
 namespace BinaryTrees
 {
+  enum TraversalOrder { PreOrder, InOrder, PostOrder }
   class Node
   {
     public int Data { get;  }
@@ -13,7 +11,7 @@ namespace BinaryTrees
     public Node Right;
     public Node(int v) => Data = v;
 
-    public void Print(string indent, bool last)
+    public void PrintPreOrder(string indent, bool last)
     {
       Console.Write(indent);
       if (last)
@@ -35,7 +33,61 @@ namespace BinaryTrees
         children.Add(this.Right);
 
       for (int i = 0; i < children.Count; i++)
-        children[i].Print(indent, i == children.Count - 1);
+        children[i].PrintPreOrder(indent, i == children.Count - 1);
+    }
+
+    public void PrintInOrder(string indent, bool last)
+    {
+      Console.Write(indent);
+      if (last)
+      {
+        Console.Write("└─");
+        indent += "  ";
+      }
+      else
+      {
+        Console.Write("├─");
+        indent += "| ";
+      }
+
+      var children = new List<Node>();
+      if (this.Left != null)
+        children.Add(this.Left);
+
+      Console.WriteLine(Data);
+
+      if (this.Right != null)
+        children.Add(this.Right);
+
+      for (int i = 0; i < children.Count; i++)
+        children[i].PrintInOrder(indent, i == children.Count - 1);
+    }
+
+    public void PrintPostOrder(string indent, bool last)
+    {
+      Console.Write(indent);
+      if (last)
+      {
+        Console.Write("└─");
+        indent += "  ";
+      }
+      else
+      {
+        Console.Write("├─");
+        indent += "| ";
+      }
+
+      var children = new List<Node>();
+      if (this.Left != null)
+        children.Add(this.Left);
+
+      if (this.Right != null)
+        children.Add(this.Right);
+
+      Console.WriteLine(Data);
+
+      for (int i = 0; i < children.Count; i++)
+        children[i].PrintPostOrder(indent, i == children.Count - 1);
     }
   }
 
@@ -51,9 +103,14 @@ namespace BinaryTrees
     }
 
     public BinaryTree(Node r) => root = r;
-    public void Print()
+    public void Print(TraversalOrder order )
     {
-      root.Print("", true);
+      if ( order == TraversalOrder.InOrder)
+        root.PrintInOrder("", true);
+      else if(order == TraversalOrder.PreOrder)
+        root.PrintPreOrder("", true);
+      else if(order == TraversalOrder.PostOrder)
+        root.PrintPostOrder("", true);
     }
     //trasverse recursevily from top to bottom and find location
     private void Add( Node n, int v )
@@ -130,7 +187,30 @@ namespace BinaryTrees
 
     public void Insert(int v)
     {
+      var inserted = Insert(this.root, v);
+    }
 
+    public Node Insert(Node root, int v)
+    {
+      // if the root is null, create a new node and return it
+      if (root == null)
+      {
+        return new Node(v);
+      }
+
+      // if given key is less than the root node, recur for left subtree
+      if (v < root.Data)
+      {
+        root.Left = Insert(root.Left, v);
+      }
+
+      // if given key is more than the root node, recur for right subtree
+      else
+      {
+        root.Right = Insert(root.Right, v);
+      }
+
+      return root;
     }
 
     public void Delete(int v )
@@ -209,7 +289,10 @@ namespace BinaryTrees
     {
       int[] treeValues = { 10, 5, 15, 7, 2, 9, 31 };
       BinaryTree tree = new BinaryTree(treeValues);
-      tree.Print();
+      tree.Print(TraversalOrder.InOrder);
+      tree.Insert(1);
+      tree.Print(TraversalOrder.InOrder);
+
       Node node = tree.Find(151);
       if ( node != null )
         Console.WriteLine("found! data: " + node.Data );
@@ -229,7 +312,7 @@ namespace BinaryTrees
       root.Right.Left = new Node(9);
       root.Right.Right = new Node(1);
       BinaryTree otherTree = new BinaryTree(root);
-      otherTree.Print();
+      otherTree.Print(TraversalOrder.InOrder);
       bool otherValid = otherTree.IsBinarySearchTree();
       Console.WriteLine("Is Valid " + otherValid);
       Console.WriteLine("Total nodes " + otherTree.Count());
